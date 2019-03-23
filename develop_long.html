@@ -1384,8 +1384,9 @@ DIVIDENT = add(DIVIDENT,SUBR);
 
 
 //不要な0削除
-for(i=0;i<lenmax;i++){
-if(RES[lenmax-i-1]!=0){
+var reslength = RES.length;
+for(i=0;i<reslength;i++){
+if(RES[reslength-i-1]!=0){
 break;
 }
 RES.pop()
