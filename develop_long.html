@@ -1706,7 +1706,8 @@ return NA1;
 
 
 
-function div(NA1,NA2){
+
+function div_old(NA1,NA2){
 var i,j,k,Q;
 var RES=[];
 var DIVIDENT=[];	//割られる数をNA2の桁にそろえたもの
@@ -1763,6 +1764,149 @@ else{
 breaks=1;
 }
 }
+//RESに追加
+RES.unshift(QUOTIENT[0]);
+//DIVIDENTを初期化
+for(j=0 ; j<DIVIDENT.length ; j++){
+DIVIDENT[j] = 0;
+}
+//DIVIDENTに次の桁を代入してSUBRを加算
+DIVIDENT[0] = NA1[NA1.length-NA2.length-1-i];
+SUBR = mul(KETA,SUBR);
+DIVIDENT = add(DIVIDENT,SUBR);
+}	//forに対応
+}	//elseに対応
+
+
+//不要な0削除
+var reslength = RES.length;
+for(i=0;i<reslength;i++){
+if(RES[reslength-i-1]!=0){
+break;
+}
+RES.pop()
+}
+
+
+return RES;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function div(NA1,NA2){
+var i,j,k,Q;
+var RES=[];
+var DIVIDENT=[];	//割られる数をNA2の桁にそろえたもの
+var QUOTIENT=[];	//商の一桁
+var QUOTIENT_MAX=[];	//商の一桁の上界
+var QUOTIENT_MIN=[];
+var DIVIDENTQ=[];	//DIVIDENTから引く数
+var SUBR=[];	//余り
+var ADDR=[];	//余りからNA2を引いたもの
+var KETA=[];
+var COMP;	//SUBRとNA2の大小比較用
+var breaks = 1;	//for文抜け出し用
+var VAR	//デバッグ用
+
+
+QUOTIENT.push(0);
+QUOTIENT_MAX.push(0);
+QUOTIENT_MIN.push(0);
+DIVIDENTQ.push(0);
+SUBR.push(0);
+ADDR.push(0);
+KETA.push(10000000);
+i=0;
+
+
+if(NA1.length<NA2.length){
+RES.push(0);
+}
+
+else{
+//DIVIDENT初期化
+for(j=NA1.length-NA2.length ; j<NA1.length ; j++){
+DIVIDENT.push(0);
+}
+//NA1からNA2と同じ桁数の要素を取り出してDIVIDENTに格納
+k=0;
+for(j=NA1.length-NA2.length ; j<NA1.length ; j++){
+DIVIDENT[k] = NA1[j];
+k += 1;
+}
+
+for(i=0 ; i<NA1.length-NA2.length+1 ; i++){
+if(DIVIDENT.length==NA2.length){
+//DIVIDENTの最大桁÷NA2の最大桁をQUOTIENT_MAXと置く
+QUOTIENT_MAX[0] = Math.floor(DIVIDENT[DIVIDENT.length-1]/NA2[NA2.length-1]);
+QUOTIENT_MIN[0] = Math.floor(DIVIDENT[DIVIDENT.length-1]/(NA2[NA2.length-1]+1));
+}
+else{
+//前回の余りを足した場合
+QUOTIENT_MAX[0] = Math.floor((10000000*DIVIDENT[DIVIDENT.length-1]+DIVIDENT[DIVIDENT.length-2])/NA2[NA2.length-1]);
+QUOTIENT_MIN[0] = Math.floor((10000000*DIVIDENT[DIVIDENT.length-1]+DIVIDENT[DIVIDENT.length-2])/(NA2[NA2.length-1]+1));
+}
+QUOTIENT[0] = QUOTIENT_MAX[0];
+
+breaks=0;
+//QUOTIENTにNA2を掛けたDIVIDENTQをDIVIDENTと比較
+DIVIDENTQ = mul(QUOTIENT,NA2);
+SUBR = sub(DIVIDENT,DIVIDENTQ);
+ADDR = sub(SUBR,NA2);
+while(breaks==0){
+//余りが負になった場合、QUOTIENTとQUOTIENT_MINの平均をQUOTIENTに代入
+if(SUBR[SUBR.length-1]<0){
+QUOTIENT[0] = Math.floor((QUOTIENT_MIN[0]+QUOTIENT[0])/2);
+//もしそれでも大きすぎる場合QUOTIENTをQUOTIENT_MAXに代入
+DIVIDENTQ = mul(QUOTIENT,NA2);
+SUBR = sub(DIVIDENT,DIVIDENTQ);
+ADDR = sub(SUBR,NA2);
+if(SUBR[SUBR.length-1]<0){
+QUOTIENT_MAX[0] = QUOTIENT[0];
+}
+if(ADDR[ADDR.length-1]>=0){
+QUOTIENT_MIN[0] = QUOTIENT[0];
+}
+breaks=0;
+}
+//余りがNA2より大きくなった場合、QUOTIENTとQUOTIENT_MANの平均をQUOTIENTに代入し、それをQUOTIENT_MINに代入
+else if(ADDR[ADDR.length-1]>=0){
+QUOTIENT[0] = Math.floor((QUOTIENT_MAX[0]+QUOTIENT[0])/2);
+//もしそれでも小さすぎる場合QUOTIENTをQUOTIENT_MAXに代入
+DIVIDENTQ = mul(QUOTIENT,NA2);
+SUBR = sub(DIVIDENT,DIVIDENTQ);
+ADDR = sub(SUBR,NA2);
+if(SUBR[SUBR.length-1]<0){
+QUOTIENT_MAX[0] = QUOTIENT[0];
+}
+if(ADDR[ADDR.length-1]>=0){
+QUOTIENT_MIN[0] = QUOTIENT[0];
+}
+breaks=0;
+}
+else{
+breaks=1;
+}
+}
+
 //RESに追加
 RES.unshift(QUOTIENT[0]);
 //DIVIDENTを初期化
