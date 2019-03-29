@@ -391,7 +391,7 @@ x_0 y_0 \\
 3分割の場合の計算量は\(O(n^{\log_{3}5})=O(n^{1.465})\)となります。
 <br>
 <br>
-カラツバ法より高速なアルゴリズムとして、高速フーリエ変換を利用したショーンハーゲ・ストラッセン法(SSA)があります。
+T00m-Cook法より高速なアルゴリズムとして、高速フーリエ変換を利用したショーンハーゲ・ストラッセン法(SSA)があります。
 計算量は\(O(n\log{n}・\log{\log{n}})\)です。
 
 
@@ -1535,7 +1535,6 @@ NA2.push(0);
 
 
 
-
 //差演算
 RES.push(NA1[0]-NA2[0]);
 for(i=1;i<lenmax;i++){
@@ -1568,7 +1567,6 @@ for(i=0;i<lenmax;i++){
 RES[i]=(-1)*RES[i];
 }
 }
-
 
 
 //不要な0削除
@@ -1671,43 +1669,66 @@ return RES;
 
 
 function mul_karatsuba(NA1,NA2){
-var i,j,k,len1,len2,len1_sta,len2_sta,c1,c2;
+var i,j,k,len1,len2,c1,c2,cmax;
 var RES=[];
 var N1=[];
 var N2=[];
+var N1_0=[];
+var N1_1=[];
+var N2_0=[];
+var N2_1=[];
 
 len1=NA1.length;
 c1 = 0;	//分割回数
-len1_sta = 1;	//揃え桁数
-while(len1>1){
+while(len1>=8){
 len1 = Math.floor(len1/2);
 c1 += 1;
-len1_sta = 2*len1_sta;
 }
 
 len2=NA2.length;
 c2 = 0;	//分割回数
-len2_sta = 1;	//揃え桁数
-while(len2>1){
+while(len2>=8){
 len2 = Math.floor(len2/2);
 c2 += 1;
-len2_sta = 2*len2_sta;
 }
 
+cmax = Math.max(c1,c2);
+console.log(cmax);
 
+
+if(cmax==0){
 //N1,N2に格納
 for(i=0;i<NA1.length;i++){
 N1.push(NA1[i]);
 }
-
 for(i=0;i<NA2.length;i++){
 N2.push(NA2[i]);
 }
-
-
-return NA1;
 }
 
+else{
+//NA1,NA2を分割して格納
+for(i=0;i<Math.floor(NA1.length/2);i++){
+N1_0.push(NA1[i]);
+}
+for(i=Math.floor(NA1.length/2);i<NA1.length;i++){
+N1_1.push(NA1[i]);
+}
+for(i=0;i<Math.floor(NA2.length/2);i++){
+N2_0.push(NA2[i]);
+}
+for(i=Math.floor(NA2.length/2);i<NA2.length;i++){
+N2_1.push(NA2[i]);
+}
+
+}
+
+
+
+RES = mul(NA1,NA2);
+
+return RES;
+}
 
 
 
@@ -1882,8 +1903,15 @@ QUOTIENT_MIN[0] = Math.floor(DIVIDENT[DIVIDENT.length-1]/(NA2[NA2.length-1]+1));
 }
 else{
 //前回の余りを足した場合
+if(DIVIDENT.length>1){
 QUOTIENT_MAX[0] = Math.floor((10000000*DIVIDENT[DIVIDENT.length-1]+DIVIDENT[DIVIDENT.length-2])/NA2[NA2.length-1]);
 QUOTIENT_MIN[0] = Math.floor((10000000*DIVIDENT[DIVIDENT.length-1]+DIVIDENT[DIVIDENT.length-2])/(NA2[NA2.length-1]+1));
+}
+//DIVIDENTの長さが1の場合
+else{
+QUOTIENT_MAX[0] = Math.floor((DIVIDENT[DIVIDENT.length-1])/NA2[NA2.length-1]);
+QUOTIENT_MIN[0] = Math.floor((DIVIDENT[DIVIDENT.length-1])/(NA2[NA2.length-1]+1));
+}
 }
 QUOTIENT[0] = QUOTIENT_MAX[0];
 
@@ -1948,13 +1976,14 @@ for(i=0;i<reslength;i++){
 if(RES[reslength-i-1]!=0){
 break;
 }
+else if(RES.length!=1){
 RES.pop()
+}
 }
 
 
 return RES;
 }
-
 
 
 
