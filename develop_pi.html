@@ -317,7 +317,7 @@ RES_rev.unshift(RES[i])
 }
 
 //出力用にstr型に変換
-res += String(RES_rev[0]);
+res += String(RES_rev[0]/1000000);
 for(i=1;i<RES.length;i++){
 res += String(Math.floor(RES_rev[i]/1000000)-10*Math.floor(RES_rev[i]/10000000));
 res += String(Math.floor(RES_rev[i]/100000)-10*Math.floor(RES_rev[i]/1000000));
@@ -398,7 +398,7 @@ RES_rev.unshift(RES[i])
 }
 
 //出力用にstr型に変換
-res += String(RES_rev[0]);
+res += String(RES_rev[0]/1000000);
 for(i=1;i<RES.length;i++){
 res += String(Math.floor(RES_rev[i]/1000000)-10*Math.floor(RES_rev[i]/10000000));
 res += String(Math.floor(RES_rev[i]/100000)-10*Math.floor(RES_rev[i]/1000000));
