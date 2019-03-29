@@ -1572,8 +1572,29 @@ RES[i]=(-1)*RES[i];
 
 
 //不要な0削除
-for(i=0;i<lenmax;i++){
-if(RES[lenmax-i-1]!=0){
+var na1length = NA1.length;
+for(i=0;i<na1length;i++){
+if(NA1[na1length-i-1]!=0){
+break;
+}
+else if(NA1.length!=1){
+NA1.pop();
+}
+}
+
+var na2length = NA2.length;
+for(i=0;i<na2length;i++){
+if(NA2[na2length-i-1]!=0){
+break;
+}
+else if(NA2.length!=1){
+NA2.pop();
+}
+}
+
+var reslength = RES.length;
+for(i=0;i<reslength;i++){
+if(RES[reslength-i-1]!=0){
 break;
 }
 else if(RES.length!=1){
