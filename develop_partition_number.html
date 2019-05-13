@@ -1,0 +1,557 @@
+﻿<!DOCTYPE html>
+<html lang="ja"><head>
+<title>分割数・ヤング図形</title>
+<meta http-equiv="content-type" charset="utf-8">
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body style="margin-top : 0px;margin-left : 0px;margin-right : 0px;margin-bottom : 0px;" bgcolor="#eeeeee">
+<div align="center">
+  <table summary="メインテーブル" width="800" cellspacing="0" cellpadding="0" bgcolor="#ffffff">
+    <tbody>
+
+
+      
+
+      <tr>
+        <td bgcolor="#ffffff" align="center">
+        <table width="800" cellspacing="0">
+          <tbody>
+          
+            <tr>
+		<td width="60" height="60" bgcolor="#ffffff" align="left">
+		<canvas id="Canvas1" width="60" height="60"></canvas>
+		<script>
+      		var canvas1 = document.getElementById("Canvas1");
+      		var context = canvas1.getContext('2d');
+		let ctx1 = canvas1.getContext('2d');
+		ctx1.beginPath();
+		let g = ctx1.createRadialGradient(30, 30, 20, 30, 30, 30);
+		g.addColorStop(0.0, 'yellow');
+		g.addColorStop(1.0, 'black');
+		ctx1.fillStyle = g;
+		ctx1.fillRect(0, 0, 60, 60);
+		ctx1.fillStyle = "#6600ff";
+		ctx1.arc(30, 30, 20, 0, 360/180*Math.PI);
+		ctx1.fill();
+
+		ctx1.beginPath();
+		ctx1.fillStyle = "#ffffff";
+		ctx1.arc(35, 30, 15, 0, 360/180*Math.PI);
+		ctx1.fill();
+    		</script>
+		</td>
+		<td width="340" height="60" bgcolor="#ffffff" align=left" valign="top"><font size="3" face="Impact">Kazuki Matsushita's Homepage</font>
+		<br><font size="2">色々なネタを紹介していきます</font></td>
+		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="index.html"><font size="2">HOME</font></a></td>
+		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="jikoshoukai.html"><font size="2">自己紹介</font></a></td>
+                <td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href=""><font size="2">ブログ</font></a></td>
+		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="develop.html"><font size="2">開発したもの</font></a></td>
+		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href=""><font size="2">リンク</font></a></td>
+            </tr>
+          </tbody>
+        </table>
+     
+       	<hr>
+
+        <br>
+	<table>
+        <tr>
+	<div style="font-size: 16pt; color: #000000; background-color: #ccccff">
+		分割数・ヤング図形
+	</div>
+	<tr>
+	</table>
+	</br>
+
+
+        <table width="750" border="0">
+          <tbody>
+		<td width="750" bgcolor="#ffffff" align="left" valign="bottom">
+
+
+
+
+
+
+<font size="5">区別のない組み合わせ</font>
+<hr>
+高校数学の数Aの場合の数の問題に次のような問題をしばしば見かけるものと思う
+<br>
+<br>
+「6個の球を、区別のない3個の箱に入れる時の場合の数を求めよ」
+<br>
+<br>
+この問題を解くには単純に数え上げるのが一般的な方法である。答えは以下の<strong>7通り</strong>である。
+<br>
+〇〇〇〇〇〇｜｜
+<br>
+〇〇〇〇〇｜〇｜
+<br>
+〇〇〇〇｜〇〇｜
+<br>
+〇〇〇〇｜〇｜〇
+<br>
+〇〇〇｜〇〇〇｜
+<br>
+〇〇〇｜〇〇｜〇
+<br>
+〇〇｜〇〇｜〇〇
+<br>
+<br>
+高校数学で数え上げを用いて場合の数を求めるのはかなりの違和感を感じるはずである。
+それもそのはず、箱の数を区別しての数え上げであればコンビネーションの計算で簡単に求まる。
+公式を用いて計算する方法がないかを考えたくなるのは自然である。
+<br>
+仮に箱に区別がある場合、場合の数は重複数え上げによって求まる。すなわち"〇"6個と"|"2個の並べ方を求めればいいので\({}_8 C_2\)=28通りである。
+<br>
+箱の区別のない場合は一発で求める方法は存在しないが、手作業での数え上げよりは格段に効率的に求めるアルゴリズムが存在する。
+<br>
+<br>
+n個の球をk個の区別のない箱に分ける場合の数をC(n,k)とするとき、次の漸化式が成り立つ
+<br>
+C(n,k) = C(n,k-1) + C(n-k,k)
+<br>
+理由としては、区別のない球を区別のない箱に入れる事象は、①少なくとも一つの箱が空の場合と②すべての箱に１個以上の球が入る場合という排反事象に分割できるからである。
+<br>
+①の場合の数はC(n,k-1)、一方で②の場合の数はすべての箱から１つの球を除去した場合の場合の数に等しいのでC(n-k,k)である。
+<br>
+これに以下の境界条件を適用すると任意の場合の数を計算できる。
+<br>
+C(m,1) = 1
+<br>
+C(1,m) = 1
+<br>
+C(0,m) = 1
+<br>
+<br>
+\(n \leq 15,k \leq 15\)まで計算すると以下のようになる
+<br>
+
+<table width="100%" cellspacing="1" cellpadding="2" border="0" bgcolor="#000000">
+                <tbody>
+                  <tr>
+                <td width="170" bgcolor="#cccccc">n＼k</td>
+                <td width="170" bgcolor="#cccccc">1</td>
+		<td width="170" bgcolor="#cccccc">2</td>
+		<td width="170" bgcolor="#cccccc">3</td>
+		<td width="170" bgcolor="#cccccc">4</td>
+		<td width="170" bgcolor="#cccccc">5</td>
+		<td width="170" bgcolor="#cccccc">6</td>
+                <td width="170" bgcolor="#cccccc">7</td>
+		<td width="170" bgcolor="#cccccc">8</td>
+		<td width="170" bgcolor="#cccccc">9</td>
+		<td width="170" bgcolor="#cccccc">10</td>
+		<td width="170" bgcolor="#cccccc">11</td>
+                <td width="170" bgcolor="#cccccc">12</td>
+		<td width="170" bgcolor="#cccccc">13</td>
+		<td width="170" bgcolor="#cccccc">14</td>
+		<td width="170" bgcolor="#cccccc">15</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">1</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">1</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">2</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+                <td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+                <td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">3</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">2</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+                <td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+                <td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">4</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">4</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+                <td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+                <td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">5</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">3</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">6</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+                <td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+                <td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">6</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">4</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">9</td>
+		<td width="170" bgcolor="#ffffff">10</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+                <td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+                <td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">7</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">4</td>
+		<td width="170" bgcolor="#ffffff">8</td>
+		<td width="170" bgcolor="#ffffff">11</td>
+		<td width="170" bgcolor="#ffffff">13</td>
+		<td width="170" bgcolor="#ffffff">14</td>
+                <td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+                <td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">8</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">10</td>
+		<td width="170" bgcolor="#ffffff">15</td>
+		<td width="170" bgcolor="#ffffff">18</td>
+		<td width="170" bgcolor="#ffffff">20</td>
+                <td width="170" bgcolor="#ffffff">21</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+                <td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+		<td width="170" bgcolor="#ffffff">22</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">9</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">5</td>
+		<td width="170" bgcolor="#ffffff">12</td>
+		<td width="170" bgcolor="#ffffff">18</td>
+		<td width="170" bgcolor="#ffffff">23</td>
+		<td width="170" bgcolor="#ffffff">26</td>
+                <td width="170" bgcolor="#ffffff">28</td>
+		<td width="170" bgcolor="#ffffff">29</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+                <td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">10</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">6</td>
+		<td width="170" bgcolor="#ffffff">14</td>
+		<td width="170" bgcolor="#ffffff">23</td>
+		<td width="170" bgcolor="#ffffff">30</td>
+		<td width="170" bgcolor="#ffffff">35</td>
+                <td width="170" bgcolor="#ffffff">38</td>
+		<td width="170" bgcolor="#ffffff">40</td>
+		<td width="170" bgcolor="#ffffff">41</td>
+		<td width="170" bgcolor="#ffffff">42</td>
+		<td width="170" bgcolor="#ffffff">42</td>
+                <td width="170" bgcolor="#ffffff">42</td>
+		<td width="170" bgcolor="#ffffff">42</td>
+		<td width="170" bgcolor="#ffffff">42</td>
+		<td width="170" bgcolor="#ffffff">42</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">11</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">6</td>
+		<td width="170" bgcolor="#ffffff">16</td>
+		<td width="170" bgcolor="#ffffff">27</td>
+		<td width="170" bgcolor="#ffffff">37</td>
+		<td width="170" bgcolor="#ffffff">44</td>
+                <td width="170" bgcolor="#ffffff">49</td>
+		<td width="170" bgcolor="#ffffff">52</td>
+		<td width="170" bgcolor="#ffffff">54</td>
+		<td width="170" bgcolor="#ffffff">55</td>
+		<td width="170" bgcolor="#ffffff">56</td>
+                <td width="170" bgcolor="#ffffff">56</td>
+		<td width="170" bgcolor="#ffffff">56</td>
+		<td width="170" bgcolor="#ffffff">56</td>
+		<td width="170" bgcolor="#ffffff">56</td>
+                  </tr>
+
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">12</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">19</td>
+		<td width="170" bgcolor="#ffffff">34</td>
+		<td width="170" bgcolor="#ffffff">47</td>
+		<td width="170" bgcolor="#ffffff">58</td>
+                <td width="170" bgcolor="#ffffff">65</td>
+		<td width="170" bgcolor="#ffffff">70</td>
+		<td width="170" bgcolor="#ffffff">73</td>
+		<td width="170" bgcolor="#ffffff">75</td>
+		<td width="170" bgcolor="#ffffff">76</td>
+                <td width="170" bgcolor="#ffffff">77</td>
+		<td width="170" bgcolor="#ffffff">77</td>
+		<td width="170" bgcolor="#ffffff">77</td>
+		<td width="170" bgcolor="#ffffff">77</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">13</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">7</td>
+		<td width="170" bgcolor="#ffffff">21</td>
+		<td width="170" bgcolor="#ffffff">39</td>
+		<td width="170" bgcolor="#ffffff">57</td>
+		<td width="170" bgcolor="#ffffff">71</td>
+                <td width="170" bgcolor="#ffffff">82</td>
+		<td width="170" bgcolor="#ffffff">89</td>
+		<td width="170" bgcolor="#ffffff">94</td>
+		<td width="170" bgcolor="#ffffff">97</td>
+		<td width="170" bgcolor="#ffffff">99</td>
+                <td width="170" bgcolor="#ffffff">100</td>
+		<td width="170" bgcolor="#ffffff">101</td>
+		<td width="170" bgcolor="#ffffff">101</td>
+		<td width="170" bgcolor="#ffffff">101</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">14</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">8</td>
+		<td width="170" bgcolor="#ffffff">24</td>
+		<td width="170" bgcolor="#ffffff">47</td>
+		<td width="170" bgcolor="#ffffff">70</td>
+		<td width="170" bgcolor="#ffffff">90</td>
+                <td width="170" bgcolor="#ffffff">105</td>
+		<td width="170" bgcolor="#ffffff">116</td>
+		<td width="170" bgcolor="#ffffff">123</td>
+		<td width="170" bgcolor="#ffffff">128</td>
+		<td width="170" bgcolor="#ffffff">131</td>
+                <td width="170" bgcolor="#ffffff">133</td>
+		<td width="170" bgcolor="#ffffff">134</td>
+		<td width="170" bgcolor="#ffffff">135</td>
+		<td width="170" bgcolor="#ffffff">135</td>
+                  </tr>
+
+		<tr>
+                <td width="170" bgcolor="#cccccc">15</td>
+                <td width="170" bgcolor="#ffffff">1</td>
+		<td width="170" bgcolor="#ffffff">8</td>
+		<td width="170" bgcolor="#ffffff">27</td>
+		<td width="170" bgcolor="#ffffff">54</td>
+		<td width="170" bgcolor="#ffffff">84</td>
+		<td width="170" bgcolor="#ffffff">110</td>
+                <td width="170" bgcolor="#ffffff">131</td>
+		<td width="170" bgcolor="#ffffff">146</td>
+		<td width="170" bgcolor="#ffffff">157</td>
+		<td width="170" bgcolor="#ffffff">164</td>
+		<td width="170" bgcolor="#ffffff">169</td>
+                <td width="170" bgcolor="#ffffff">172</td>
+		<td width="170" bgcolor="#ffffff">174</td>
+		<td width="170" bgcolor="#ffffff">175</td>
+		<td width="170" bgcolor="#ffffff">176</td>
+                  </tr>
+
+
+		</tbody>
+</table>
+
+<br>
+<br>
+<br>
+<br>
+<font size="5">分割数</font>
+<hr>
+
+
+
+<br>
+<br>
+<br>
+
+
+
+
+
+
+
+
+</td>
+            <tr>
+              <td colspan="2" style="font-size : 13pt;" height="30"></td>
+            </tr>
+            <tr>
+              <td width="200" align="center">
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+              <br>
+
+
+
+
+
+
+</td>
+              <td>
+              
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" align="right"><a href="#0">ページ上部へ▲</a></td>
+            </tr>
+          </tbody>
+        </table>
+
+
+	<br>
+        <table width="780" border="0">
+         
+		<tbody>
+            <tr>
+              <td colspan="2" style="font-size : 13pt;" height="30"></td>
+            </tr>
+            <td width="200" align="center">
+              
+
+              <td>
+              <table width="100%" cellspacing="1" cellpadding="2" border="0" bgcolor="#cccccc">
+              
+        
+              <table width="100%" cellspacing="1" cellpadding="2" border="0" bgcolor="#cccccc">
+                
+
+              </table>
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+       
+
+
+
+            </tr>
+          </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
+        </td>
+      </tr>
+      <tr>
+        <td style="height : 50px;" valign="bottom" bgcolor="#0000ff" align="center">
+	<a href="index.html">HOME</a>｜
+	<a href="jikoshoukai.html">自己紹介</a>｜
+	<a href="">ブログ</a>｜
+	<a href="develop.html">開発したもの</a> |
+	<a href="">リンク</a></td>
+      </tr>
+      <tr>
+        <td style="height : 50px;" bgcolor="#0000ff" align="center"><font style="font-size : 8pt;" color="#000000">&nbsp;<br>
+        掲載内容の無断転載は禁じます。</font></td>
+      </tr>
+      <tr>
+        <td style="font-size : 10pt;color : white;" height="100" bgcolor="#0000ff" background="" align="center"><strong style="font-size : 12pt;"></strong><br>
+        連絡先 : kmatsushita@keio.jp<br>
+        <font style="font-size : 8pt;" color="#000000">Copyright (ｃ) Kazuki Matsushita  　All Rights Reserved.</font></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body></html>
