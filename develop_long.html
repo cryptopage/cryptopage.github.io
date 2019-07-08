@@ -1,6 +1,6 @@
 ﻿<!DOCTYPE html>
 <html lang="ja"><head>
-<title>多倍長整数演算</title>
+<title>多倍長演算</title>
 <meta http-equiv="content-type" charset="utf-8">
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_CHTML"></script>
 
@@ -54,7 +54,7 @@
 		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="index.html"><font size="2">HOME</font></a></td>
 		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="jikoshoukai.html"><font size="2">自己紹介</font></a></td>
                 <td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href=""><font size="2">ブログ</font></a></td>
-		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="develop.html"><font size="2">開発したもの</font></a></td>
+		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href="develop.html"><font size="2">最新のトピック</font></a></td>
 		<td width="80" height="60" bgcolor="#ffffff" align="center" valign="bottom"><a href=""><font size="2">リンク</font></a></td>
             </tr>
           </tbody>
@@ -66,7 +66,7 @@
 	<table>
         <tr>
 	<div style="font-size: 16pt; color: #000000; background-color: #ccccff">
-		多倍長整数演算
+		多倍長演算
 	</div>
 	<tr>
 	</table>
@@ -270,131 +270,15 @@ z_1=z_2+z_0-(x_1-x_0)・(y_1-y_0)
 \]
 加減算の回数は大幅に増えますが、計算コストの大きい乗算回数が減ることで全体的な計算コストが減ることになります。
 <br>
-このカラツバ法を行列を用いて表すと以下のようになります。
-\[
-\left(
-\begin{array}{cc}
-x_{1} & y_{1} \\
-x_{0} & y_{0} \\
-x_{0}-x_{1} & y_{0}-y_{1}
-\end{array}
-\right)
-=
-\left(
-\begin{array}{cc}
-0 & 1 \\
-1 & 0 \\
-1 & -1 
-\end{array}
-\right)
-
-\left(
-\begin{array}{cc}
-x_0 & y_0 \\
-x_1 & y_1 
-\end{array}
-\right)
-\]
-
-\[
-\left(
-\begin{array}{c}
-z_0 \\
-z_1 \\
-z_2
-\end{array}
-\right)
-=
-\left(
-\begin{array}{ccc}
-0 & 1 & 0 \\
-1 & 1 & -1 \\
-1 & 0 & 0 
-\end{array}
-\right)
-
-\left(
-\begin{array}{c}
-x_1 y_1 \\
-x_0 y_0 \\
-(x_{0}-x_{1})(y_{0}-y_{1})
-\end{array}
-\right)
-\]
-
-<br>
 カラツバ法を分割数について一般化したものがToom-Cook法です。
-例として3分割の場合は以下のようにあらわされます。
-\[
-\left(
-\begin{array}{cc}
-x_{2} & y_{2} \\
-x_{0} & y_{0} \\
-x_{0}-x_{1}+x_{2} & y_{0}-y_{1}+y_{2} \\
-x_{0}+x_{1}+x_{2} & y_{0}+y_{1}+y_{2} \\
-x_{0}-2x_{1}+4x_{2} & y_{0}-2y_{1}+4y_{2} \\
-\end{array}
-\right)
-=
-\left(
-\begin{array}{cc}
-0 & 0 & 1 \\
-1 & 0 & 0 \\
-1 & -1 & 1 \\
-1 & 1 & 1 \\
-1 & -2 & 4
-\end{array}
-\right)
-
-\left(
-\begin{array}{cc}
-x_0 & y_0 \\
-x_1 & y_1 \\
-x_2 & y_2
-\end{array}
-\right)
-\]
-
-\[
-\left(
-\begin{array}{c}
-z_0 \\
-z_1 \\
-z_2 \\
-z_3 \\
-z_4
-\end{array}
-\right)
-=
-\frac{1}{6}
-\left(
-\begin{array}{ccc}
-0 & 6 & 0 & 0 & 0 \\
--12 & 3 & -6 & 2 & 1 \\
--6 & -6 & 3 & 3 & 0 \\
-12 & -3 & 3 & 1 & -1 \\
-6 & 0 & 0 & 0 & 0
-\end{array}
-\right)
-
-\left(
-\begin{array}{c}
-x_2 y_2 \\
-x_0 y_0 \\
-(x_{0}-x_{1}+x_{2})(y_{0}-y_{1}+y_{2}) \\
-(x_{0}+x_{1}+x_{2})(y_{0}+y_{1}+y_{2}) \\
-(x_{0}-2x_{1}+4x_{2})(y_{0}-2y_{1}+4y_{2})
-\end{array}
-\right)
-\]
-
 3分割の場合の計算量は\(O(n^{\log_{3}5})=O(n^{1.465})\)となります。
 <br>
 <br>
-T00m-Cook法より高速なアルゴリズムとして、高速フーリエ変換を利用したショーンハーゲ・ストラッセン法(SSA)があります。
-計算量は\(O(n\log{n}・\log{\log{n}})\)です。
-
-
+T00m-Cook法より高速なアルゴリズムとして、FFT(高速フーリエ変換)を利用した方法があります。FFTを用いるとn要素のフーリエ変換が\(O(n\log{n})\)で計算可能で、
+フーリエ変換を行うと畳み込みが各要素ごとの積に変換されるので、これを逆フーリエ変換すると多倍長整数の積が得られます。
+<br>
+多倍長整数の乗算の場合は通常のフーリエ変換ではなく整数環フーリエ変換（pを法とする1の原始p乗根を回転子として用いる）が使われます。
+法とする数pは要素数より大きくなければならず、各要素ごとに桁数に比例した計算量を必要とするため計算量は\(O(n\log{n}・\log{\log{n}})\)となります。
 
 
 
@@ -402,16 +286,6 @@ T00m-Cook法より高速なアルゴリズムとして、高速フーリエ変�
 <br>
 <br>
 <br>
-<font size="4">●除算</font>
-<br>
-四則演算の中で最も計算量の大きい除算ですが、除算の計算コストの大部分は乗算に依存します。
-<br>
-乗算・除算がともに筆算の場合、桁数に比例した乗算回数を要するので計算量は\(O(n^3)\)となります。
-
-</font>
-
-
-
 <br>
 <br>
 <br>
@@ -2081,7 +1955,7 @@ test.result.value = "";
 	<a href="index.html">HOME</a>｜
 	<a href="jikoshoukai.html">自己紹介</a>｜
 	<a href="">ブログ</a>｜
-	<a href="develop.html">開発したもの</a> |
+	<a href="develop.html">最新のトピック</a> |
 	<a href="">リンク</a></td>
       </tr>
       <tr>
@@ -2090,7 +1964,7 @@ test.result.value = "";
       </tr>
       <tr>
         <td style="font-size : 10pt;color : white;" height="100" bgcolor="#0000ff" background="" align="center"><strong style="font-size : 12pt;"></strong><br>
-        連絡先 : kmatsushita[at]keio.jp<br>
+        連絡先 : kazuki.matsushita[at]icloud.com<br>
         <font style="font-size : 8pt;" color="#000000">Copyright (ｃ) Kazuki Matsushita  　All Rights Reserved.</font></td>
       </tr>
     </tbody>
