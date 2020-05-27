@@ -154,6 +154,7 @@ var sig_2=1;
 var sig_3=1;
 var count=0;
 var item=0;	//どっちの項を計算するか識別
+var str_slice=0;	//末端から削除する文字数の指定
 var N_1=[];	//1000000...を格納
 var N_id=[];	//1を格納
 var DENO=[];	//分母を格納
@@ -245,55 +246,75 @@ REV_3=[];
 
 //格納
 if(test.digits.value=="1000"){
-for(l=0;l<142;l++){
+for(l=0;l<143;l++){
 N_1.push(0); 
 }
+str_slice=7;
 }
+
 else if(test.digits.value=="2000"){
-for(l=0;l<285;l++){
+for(l=0;l<286;l++){
 N_1.push(0); 
 }
+str_slice=8;
 }
+
 else if(test.digits.value=="5000"){
-for(l=0;l<714;l++){
+for(l=0;l<715;l++){
 N_1.push(0); 
 }
+str_slice=11;
 }
+
 else if(test.digits.value=="10000"){
-for(l=0;l<1428;l++){
+for(l=0;l<1429;l++){
 N_1.push(0); 
 }
+str_slice=9;
 }
+
 else if(test.digits.value=="20000"){
-for(l=0;l<2857;l++){
+for(l=0;l<2858;l++){
 N_1.push(0); 
 }
+str_slice=12;
 }
+
 else if(test.digits.value=="50000"){
-for(l=0;l<7142;l++){
+for(l=0;l<7144;l++){
 N_1.push(0); 
 }
+str_slice=14;
 }
+
 else if(test.digits.value=="100000"){
-for(l=0;l<14285;l++){
+for(l=0;l<14287;l++){
 N_1.push(0); 
 }
+str_slice=15;
 }
+
 else if(test.digits.value=="200000"){
-for(l=0;l<28571;l++){
+for(l=0;l<28572;l++){
 N_1.push(0); 
 }
+str_slice=10;
 }
+
 else if(test.digits.value=="500000"){
-for(l=0;l<71428;l++){
+for(l=0;l<71430;l++){
 N_1.push(0); 
 }
+str_slice=16;
 }
+
 else if(test.digits.value=="1000000"){
-for(l=0;l<142857;l++){
+for(l=0;l<142858;l++){
 N_1.push(0); 
 }
+str_slice=12;
 }
+
 N_1.push(1000000);
 RES_d = N_1;
 
@@ -363,7 +384,9 @@ res += String(Math.floor(RES_rev[i]/100)-10*Math.floor(RES_rev[i]/1000));
 res += String(Math.floor(RES_rev[i]/10)-10*Math.floor(RES_rev[i]/100));
 res += String(RES_rev[i]-10*Math.floor(RES_rev[i]/10));
 }
-test.result.value = res;
+
+
+test.result.value = res.slice(0,-1*str_slice);
 
 DENO = add(DENO,[2]);
 REV = div(N_1,DENO);
@@ -444,7 +467,8 @@ res += String(Math.floor(RES_rev[i]/100)-10*Math.floor(RES_rev[i]/1000));
 res += String(Math.floor(RES_rev[i]/10)-10*Math.floor(RES_rev[i]/100));
 res += String(RES_rev[i]-10*Math.floor(RES_rev[i]/10));
 }
-test.result.value = res;
+
+test.result.value = res.slice(0,-1*str_slice);
 
 
 
