@@ -88,7 +88,7 @@
 <br>
 <br>
 <br>
-<font size="5">円周率計算法の比較</font>
+<font size="5">グレゴリー級数系</font>
 <hr>
 <font size="3">
 グレゴリー級数
@@ -107,7 +107,7 @@
 <br>
 ・マチンの公式：
 \[ \frac{\pi}{4} = 4\arctan\frac{1}{5} - \arctan\frac{1}{239} \]
-級数が2つありますが比較的収束が早いです。桁数に対して計算量が多項式的に増えます。
+級数が2つありますが比較的収束が早いです。桁数と計算回数がほぼ比例します。
 <br>
 <br>
 
@@ -116,6 +116,66 @@
 <br>
 <br>
 <br>
+
+
+
+
+
+<font size="5">ラマヌジャン系</font>
+<hr>
+<font size="3">
+ラマヌジャン系列の円周率計算法をいくつか紹介します。
+<br>
+<br>
+<br>
+<br>
+Ramanujanの公式：
+\[ \frac{1}{\pi} = \frac{\sqrt{8}}{9801} \sum^{\infty}_{n=0} \frac{(4n)!(1103+26390n)}{(n!)^4 \cdot 396^{4n}} \]
+
+<br>
+<br>
+<br>
+<br>
+Ramanujanの公式(2)：
+\[ \frac{1}{\pi} = \frac{1}{3528} \sum^{\infty}_{n=0} \frac{(-1)^n(4n)!(1123+21460n)}{(n!)^4 \cdot 14112^{2n}} \]
+
+<br>
+<br>
+
+
+
+
+</font>
+<br>
+<br>
+<br>
+<br>
+
+
+
+
+
+<font size="5">その他の円周率計算法</font>
+<hr>
+<font size="3">
+その他の円周率計算方法としては、リーマンゼータ関数
+\[  \zeta(s) = \sum^{\infty}_{n=1}\frac{1}{n^s}  \]
+を用いたものがあります。以下に、代表的なものを示します。
+\[  \zeta(2) = \sum^{\infty}_{n=1}\frac{1}{n^2} = \frac{\pi^2}{6}  \]
+\[  \zeta(4) = \sum^{\infty}_{n=1}\frac{1}{n^4} = \frac{\pi^4}{90}  \]
+\[  \zeta(6) = \sum^{\infty}_{n=1}\frac{1}{n^6} = \frac{\pi^6}{945}  \]
+<br>
+<br>
+また、算術幾何平均を用いたガウス・ルジャンドルのアルゴリズムもあり、２次収束するので非常に計算量は少なくなりますが、２の平方根を求める円周率と同程度の桁数まで計算する必要があります。
+逐次処理になるのでスパコンでの計算に向いてないのも問題点です。
+</font>
+<br>
+<br>
+<br>
+<br>
+
+
+
 
 
 <font size="5">テスト</font>
@@ -128,8 +188,9 @@
 <input type="button" value="start" onclick="start()">
 <select name="algorithm">
 <option value="">計算アルゴリズムを選択</option>
-<option value="leibniz">ライプニッツ</option>
-<option value="matin">マチン</option>
+<option value="leibniz">ライプニッツの公式</option>
+<option value="matin">マチンの公式</option>
+<option value="ramanujan2">ラマヌジャンの公式（２）</option>
 </select>
 <select name="digits">
 <option value="N">桁数を選択</option>
@@ -180,6 +241,9 @@ var VAR_10=[];
 var VAR_11=[];
 var VAR_12=[];
 var RES_d0=[];
+var ITEM=[0];	//項数を多倍長整数で格納する配列
+var SIGMA=[0];	//シグマの中身（１項）を格納する配列
+var SIGMA_SUM=[0];	//シグマの中身（和）を格納する配列
 
 
 
@@ -327,6 +391,10 @@ start_leibniz_calc();
 else if(test.algorithm.value=="matin"){
 start_matin_calc();
 }
+else if(test.algorithm.value=="ramanujan2"){
+start_ramanujan2_calc();
+}
+
 }
 }
 
@@ -488,6 +556,135 @@ if(VAR_9[VAR_9.length-1]==0){
 clearTimeout( timer_id );
 }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var factorial_n = [1];
+var factorial_4n = [1];
+var C_4N = [0];
+var C_14112_2N = [1];
+var C_1123_21460N = [1123];
+
+
+
+
+function start_ramanujan2_calc(){
+RES_rev=[];
+res="";
+
+
+
+SIGMA = RES_d;
+SIGMA = mul(SIGMA,factorial_4n);
+SIGMA = mul(SIGMA,C_1123_21460N);
+SIGMA = div(SIGMA,factorial_n);
+SIGMA = div(SIGMA,factorial_n);
+SIGMA = div(SIGMA,factorial_n);
+SIGMA = div(SIGMA,factorial_n);
+SIGMA = div(SIGMA,C_14112_2N);
+SIGMA = sub(SIGMA,[0]);
+
+
+
+if(sig==1){
+SIGMA_SUM = add(SIGMA_SUM, SIGMA);
+}
+else if(sig==-1){
+SIGMA_SUM = sub(SIGMA_SUM, SIGMA);
+}
+
+
+
+RES = mul(RES_d,[3528]);
+RES = mul(RES_d,RES);
+RES = div(RES,SIGMA_SUM);
+
+
+
+console.log(SIGMA.length);
+
+
+
+
+ITEM = add(ITEM,[1]);
+factorial_n = mul(factorial_n,ITEM);
+
+C_4N = add(C_4N,[1]);
+factorial_4n = mul(factorial_4n,C_4N);
+C_4N = add(C_4N,[1]);
+factorial_4n = mul(factorial_4n,C_4N);
+C_4N = add(C_4N,[1]);
+factorial_4n = mul(factorial_4n,C_4N);
+C_4N = add(C_4N,[1]);
+factorial_4n = mul(factorial_4n,C_4N);
+
+C_14112_2N = mul(C_14112_2N,[14112]);
+C_14112_2N = mul(C_14112_2N,[14112]);
+
+C_1123_21460N = add(C_1123_21460N,[21460]);
+
+
+
+
+
+
+
+
+for(i=0;i<RES.length;i++){
+RES_rev.unshift(RES[i])
+}
+
+//出力用にstr型に変換
+res += String(RES_rev[0]/1000000);
+for(i=1;i<RES.length;i++){
+res += String(Math.floor(RES_rev[i]/1000000)-10*Math.floor(RES_rev[i]/10000000));
+res += String(Math.floor(RES_rev[i]/100000)-10*Math.floor(RES_rev[i]/1000000));
+res += String(Math.floor(RES_rev[i]/10000)-10*Math.floor(RES_rev[i]/100000));
+res += String(Math.floor(RES_rev[i]/1000)-10*Math.floor(RES_rev[i]/10000));
+res += String(Math.floor(RES_rev[i]/100)-10*Math.floor(RES_rev[i]/1000));
+res += String(Math.floor(RES_rev[i]/10)-10*Math.floor(RES_rev[i]/100));
+res += String(RES_rev[i]-10*Math.floor(RES_rev[i]/10));
+}
+
+
+test.result.value = res.slice(0,-1*str_slice);
+
+DENO = add(DENO,[2]);
+REV = div(N_1,DENO);
+sig = sig*(-1);
+
+timer_id = setTimeout(start_ramanujan2_calc,100);
+
+
+
+if(SIGMA.length==1){
+if(SIGMA[0]==0){
+clearTimeout( timer_id );
+}
+}
+
+
+}
+
 
 
 
