@@ -501,16 +501,16 @@ else {
 VAR_5 = mul(ODD_1,DENO_1);
 VAR_6 = mul(ODD_1,DENO_2);
 if(sig_1==1){
-VAR_7 = div(N_1,VAR_5);
+VAR_7 = div_NL(N_1,VAR_5);
 VAR_7 = mul(VAR_7,[4]);
-VAR_8 = div(N_1,VAR_6);
+VAR_8 = div_NL(N_1,VAR_6);
 RES_d0 = add(RES_d0,VAR_7);
 RES_d0 = sub(RES_d0,VAR_8);
 }
 else if(sig_1==-1){
-VAR_7 = div(N_1,VAR_5);
+VAR_7 = div_NL(N_1,VAR_5);
 VAR_7 = mul(VAR_7,[4]);
-VAR_8 = div(N_1,VAR_6);
+VAR_8 = div_NL(N_1,VAR_6);
 RES_d0 = sub(RES_d0,VAR_7);
 RES_d0 = add(RES_d0,VAR_8);
 }
@@ -596,11 +596,11 @@ res="";
 SIGMA = RES_d;
 SIGMA = mul(SIGMA,factorial_4n);
 SIGMA = mul(SIGMA,C_1123_21460N);
-SIGMA = div(SIGMA,factorial_n);
-SIGMA = div(SIGMA,factorial_n);
-SIGMA = div(SIGMA,factorial_n);
-SIGMA = div(SIGMA,factorial_n);
-SIGMA = div(SIGMA,C_14112_2N);
+SIGMA = div_NL(SIGMA,factorial_n);
+SIGMA = div_NL(SIGMA,factorial_n);
+SIGMA = div_NL(SIGMA,factorial_n);
+SIGMA = div_NL(SIGMA,factorial_n);
+SIGMA = div_NL(SIGMA,C_14112_2N);
 SIGMA = sub(SIGMA,[0]);
 
 
@@ -616,7 +616,7 @@ SIGMA_SUM = sub(SIGMA_SUM, SIGMA);
 
 RES = mul(RES_d,[3528]);
 RES = mul(RES_d,RES);
-RES = div(RES,SIGMA_SUM);
+RES = div_NL(RES,SIGMA_SUM);
 
 
 
@@ -855,6 +855,125 @@ return RES;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function sub_add0(NA1,NA2){
+var i,j,k;
+var RES=[];
+lenmax = Math.max(NA1.length,NA2.length);
+
+//桁揃え
+for(i=NA1.length;i<lenmax;i++){
+NA1.push(0);
+}
+for(i=NA2.length;i<lenmax;i++){
+NA2.push(0);
+}
+
+
+
+//差演算
+RES.push(NA1[0]-NA2[0]);
+for(i=1;i<lenmax;i++){
+if(RES[i-1]<0){
+RES[i-1]+=10000000;
+RES.push(NA1[i]-NA2[i]-1);
+}
+else{
+RES.push(NA1[i]-NA2[i]);
+}
+}
+
+//最大桁がマイナスになった場合
+if(RES[lenmax-1]<0){
+//配列RESを空にする
+RES.splice(0,RES.length);
+//NA1とNA2を入れ替えて引き算
+RES.push(NA2[0]-NA1[0]);
+for(i=1;i<lenmax;i++){
+if(RES[i-1]<0){
+RES[i-1]+=10000000;
+RES.push(NA2[i]-NA1[i]-1);
+}
+else{
+RES.push(NA2[i]-NA1[i]);
+}
+}
+//全要素をマイナスにする
+for(i=0;i<lenmax;i++){
+RES[i]=(-1)*RES[i];
+}
+}
+
+
+//不要な0削除
+var na1length = NA1.length;
+for(i=0;i<na1length;i++){
+if(NA1[na1length-i-1]!=0){
+break;
+}
+else if(NA1.length!=1){
+NA1.pop();
+}
+}
+
+var na2length = NA2.length;
+for(i=0;i<na2length;i++){
+if(NA2[na2length-i-1]!=0){
+break;
+}
+else if(NA2.length!=1){
+NA2.pop();
+}
+}
+
+
+
+return RES;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function mul(NA1,NA2){
 var i,j,k;
 var RES=[];
@@ -902,11 +1021,54 @@ return RES;
 
 
 
+function mul_add0(NA1,NA2){
+var i,j,k;
+var RES=[];
+lenmax = NA1.length + NA2.length;
+
+for(i=0;i<lenmax;i++){
+RES.push(0)
+}
+//積演算
+for(j=0;j<NA2.length;j++){
+RES[j] += NA1[0]*NA2[j];
+for(i=1;i<NA1.length;i++){
+RES[i+j] += NA1[i]*NA2[j];
+RES[i+j] += Math.floor(RES[i+j-1]/10000000);
+RES[i+j-1] -= 10000000*Math.floor(RES[i+j-1]/10000000);
+}
+RES[NA1.length+j] += Math.floor(RES[NA1.length+j-1]/10000000);
+RES[NA1.length+j-1] -= 10000000*Math.floor(RES[NA1.length+j-1]/10000000);
+}
+
+
+return RES;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 function mul_karatsuba(NA1,NA2){
-var i,j,k,len1,len2,len1_sta,len2_sta,c1,c2;
+var i,j,k,len1,len2,len1_sta,len2_sta,c1,c2,lenmin;
 var RES=[];
 var N1=[];
 var N2=[];
@@ -942,109 +1104,315 @@ N2.push(NA2[i]);
 
 return NA1;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function div_old(NA1,NA2){
-var i,j,k,Q;
+function mul_karatsuba(NA1,NA2){
+var i,j,k,len1,len2,c1,c2,cmax,lenmax,div_base,res_sum,reslen;
 var RES=[];
-var DIVIDENT=[];	//割られる数をNA2の桁にそろえたもの
-var QUOTIENT=[];	//商の一桁
-var DIVIDENTSUB=[];	//DIVIDENTから引く数
-var SUBR=[];	//余り
-var KETA=[];
-var COMP;	//SUBRとNA2の大小比較用
-var breaks = 1;	//for文抜け出し用
-var VAR	//デバッグ用
+var N1=[];
+var N2=[];
+var N1_0=[];
+var N1_1=[];
+var N2_0=[];
+var N2_1=[];
+var RES_0=[];
+var RES_1=[];
+var RES_2=[];
+var N1_1_N1_0=[];
+var N2_1_N2_0=[];
+var N1_10_N2_10=[];
 
 
-QUOTIENT.push(0);
-DIVIDENTSUB.push(0);
-SUBR.push(0);
-KETA.push(10000000);
-i=0;
+
+lenmax = Math.max(NA1.length,NA2.length);
+lenmin = Math.min(NA1.length,NA2.length);
+div_base = Math.floor((lenmax + 1)/2);
+
+/*
+console.log(lenmax);
+console.log(div_base);
+*/
 
 
-if(NA1.length<NA2.length){
+
+if(lenmin<32){
+RES = mul_add0(NA1,NA2);
+}
+
+else{
+//NA1,NA2を分割して格納
+for(i=0;i<div_base;i++){
+if(i<NA1.length){
+N1_0.push(NA1[i]);
+}
+else{
+N1_0.push(0);
+}
+}
+
+for(i=div_base;i<div_base*2;i++){
+if(i<NA1.length){
+N1_1.push(NA1[i]);
+}
+else{
+N1_1.push(0);
+}
+}
+
+for(i=0;i<div_base;i++){
+if(i<NA2.length){
+N2_0.push(NA2[i]);
+}
+else{
+N2_0.push(0);
+}
+}
+
+for(i=div_base;i<div_base*2;i++){
+if(i<NA2.length){
+N2_1.push(NA2[i]);
+}
+else{
+N2_1.push(0);
+}
+}
+
+
+
+/*
+console.log(N1_0);
+console.log(N1_1);
+console.log(N2_0);
+console.log(N2_1);
+*/
+
+
+
+//karatsuba演算
+
+RES_0 = mul_karatsuba_add0(N1_0,N2_0);
+RES_2 = mul_karatsuba_add0(N1_1,N2_1);
+N1_1_N1_0 = sub(N1_1,N1_0);
+N2_1_N2_0 = sub(N2_1,N2_0);
+N1_10_N2_10 = mul_karatsuba_add0(N1_1_N1_0,N2_1_N2_0);
+RES_1 = add(RES_0,RES_2);
+RES_1 = sub_add0(RES_1,N1_10_N2_10);
+
+/*
+console.log(N1_1_N1_0);
+console.log(N2_1_N2_0);
+*/
+
+
+
+//結果を格納
+for(i=0;i<div_base*2 + RES_2.length;i++){
 RES.push(0);
 }
 
-else{
-//DIVIDENT初期化
-for(j=NA1.length-NA2.length ; j<NA1.length ; j++){
-DIVIDENT.push(0);
-}
-//NA1からNA2と同じ桁数の要素を取り出してDIVIDENTに格納
-k=0;
-for(j=NA1.length-NA2.length ; j<NA1.length ; j++){
-DIVIDENT[k] = NA1[j];
-k += 1;
+for(i=0;i<RES_0.length;i++){
+RES[i] += RES_0[i];
 }
 
-for(i=0 ; i<NA1.length-NA2.length+1 ; i++){
-if(DIVIDENT.length==NA2.length){
-//DIVIDENTの最大桁÷NA2の最大桁を仮にQUOTIENTと置く
-QUOTIENT[0] = Math.floor(DIVIDENT[DIVIDENT.length-1]/NA2[NA2.length-1]);
+for(i=div_base;i<div_base + RES_1.length;i++){
+RES[i] += RES_1[i-div_base];
 }
-else{
-QUOTIENT[0] = Math.floor((10000000*DIVIDENT[DIVIDENT.length-1]+DIVIDENT[DIVIDENT.length-2])/NA2[NA2.length-1]);
+
+for(i=div_base*2;i<div_base*2 + RES_2.length;i++){
+RES[i] += RES_2[i-div_base*2];
 }
-breaks=0;
-while(breaks==0){
-//QUOTIENTにNA2を掛けたDIVIDENTSUBをDIVIDENTと比較
-DIVIDENTSUB = mul(QUOTIENT,NA2);
-SUBR = sub(DIVIDENT,DIVIDENTSUB);
-if(SUBR[SUBR.length-1]<0){
-QUOTIENT[0] -= 1;
-breaks=0;
+
+
+
+
+for(i=1;i<div_base*4;i++){
+RES[i] += Math.floor(RES[i-1]/10000000);
+RES[i-1] -= 10000000*Math.floor(RES[i-1]/10000000);
 }
-else{
-breaks=1;
-}
-}
-//RESに追加
-RES.unshift(QUOTIENT[0]);
-//DIVIDENTを初期化
-for(j=0 ; j<DIVIDENT.length ; j++){
-DIVIDENT[j] = 0;
-}
-//DIVIDENTに次の桁を代入してSUBRを加算
-DIVIDENT[0] = NA1[NA1.length-NA2.length-1-i];
-SUBR = mul(KETA,SUBR);
-DIVIDENT = add(DIVIDENT,SUBR);
-}	//forに対応
-}	//elseに対応
+
+
+
+
 
 
 //不要な0削除
-var reslength = RES.length;
-for(i=0;i<reslength;i++){
-if(RES[reslength-i-1]!=0){
+reslen = RES.length;
+
+for(i=0;i<reslen;i++){
+if(RES[reslen-i-1]!=0){
 break;
 }
 RES.pop()
 }
 
 
+
+}
+
+
 return RES;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function mul_karatsuba_add0(NA1,NA2){
+var i,j,k,len1,len2,c1,c2,cmax,lenmax,div_base,res_sum,lenmin;
+var RES=[];
+var N1=[];
+var N2=[];
+var N1_0=[];
+var N1_1=[];
+var N2_0=[];
+var N2_1=[];
+var RES_0=[];
+var RES_1=[];
+var RES_2=[];
+var N1_1_N1_0=[];
+var N2_1_N2_0=[];
+var N1_10_N2_10=[];
+
+
+
+lenmax = Math.max(NA1.length,NA2.length);
+lenmin = Math.min(NA1.length,NA2.length);
+div_base = Math.floor((lenmax + 1)/2);
+
+/*
+console.log(lenmax);
+console.log(div_base);
+*/
+
+
+
+if(lenmin<32){
+RES = mul_add0(NA1,NA2);
+}
+
+else{
+//NA1,NA2を分割して格納
+for(i=0;i<div_base;i++){
+if(i<NA1.length){
+N1_0.push(NA1[i]);
+}
+else{
+N1_0.push(0);
+}
+}
+
+for(i=div_base;i<div_base*2;i++){
+if(i<NA1.length){
+N1_1.push(NA1[i]);
+}
+else{
+N1_1.push(0);
+}
+}
+
+for(i=0;i<div_base;i++){
+if(i<NA2.length){
+N2_0.push(NA2[i]);
+}
+else{
+N2_0.push(0);
+}
+}
+
+for(i=div_base;i<div_base*2;i++){
+if(i<NA2.length){
+N2_1.push(NA2[i]);
+}
+else{
+N2_1.push(0);
+}
+}
+
+
+
+/*
+console.log(N1_0);
+console.log(N1_1);
+console.log(N2_0);
+console.log(N2_1);
+*/
+
+
+
+//karatsuba演算
+RES_0 = mul_karatsuba_add0(N1_0,N2_0);
+RES_2 = mul_karatsuba_add0(N1_1,N2_1);
+N1_1_N1_0 = sub(N1_1,N1_0);
+N2_1_N2_0 = sub(N2_1,N2_0);
+N1_10_N2_10 = mul_karatsuba_add0(N1_1_N1_0,N2_1_N2_0);
+RES_1 = add(RES_0,RES_2);
+RES_1 = sub_add0(RES_1,N1_10_N2_10);
+
+
+/*
+console.log(N1_1_N1_0);
+console.log(N2_1_N2_0);
+console.log(RES_1);
+*/
+
+
+//結果を格納
+for(i=0;i<div_base*2 + RES_2.length;i++){
+RES.push(0);
+}
+
+for(i=0;i<RES_0.length;i++){
+RES[i] += RES_0[i];
+}
+
+for(i=div_base;i<div_base + RES_1.length;i++){
+RES[i] += RES_1[i-div_base];
+}
+
+for(i=div_base*2;i<div_base*2 + RES_2.length;i++){
+RES[i] += RES_2[i-div_base*2];
+}
+
+
+
+
+for(i=1;i<div_base*4;i++){
+RES[i] += Math.floor(RES[i-1]/10000000);
+RES[i-1] -= 10000000*Math.floor(RES[i-1]/10000000);
+}
+
+}
+
+
+
+
+return RES;
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1197,6 +1565,124 @@ RES.pop()
 
 return RES;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function div_NL(NA1,NA2){
+var i,j,k,Q;
+var RES=[];
+var REV_NA2=[];
+var N1_value=[];
+var REV_NA2_ax2=[];
+var REV_NA2_2x=[];
+var REV_NA2_x1=[];
+var rev_NA2_length, res_length;
+var REV_NA2_x_NA1=[];
+
+
+
+if(NA1.length<NA2.length){
+
+RES = [0];
+return RES;
+
+}
+
+else{
+
+rev_NA2_length = NA1.length + 1;
+
+
+for(i=0;i<rev_NA2_length - NA2.length;i++){
+REV_NA2.push(0);
+}
+for(i=0;i<rev_NA2_length ;i++){
+N1_value.push(0);
+}
+REV_NA2.push(Math.floor(10000000/NA2[NA2.length-1]));
+N1_value.push(1);
+
+/*
+console.log(REV_NA2);
+console.log(sub(N1_value,mul(NA2,REV_NA2)));
+*/
+
+
+
+
+while(sub(N1_value,mul_karatsuba(NA2,REV_NA2)).length>NA2.length + 1){
+
+
+REV_NA2_ax2 = mul_karatsuba(REV_NA2,REV_NA2);
+REV_NA2_ax2 = mul_karatsuba(NA2,REV_NA2_ax2);
+
+var REV_NA2_2x=[];
+for(i=0;i<rev_NA2_length;i++){
+REV_NA2_2x.push(0);
+}
+for(i=0;i<REV_NA2.length;i++){
+REV_NA2_2x.push(REV_NA2[i]);
+}
+REV_NA2_2x= mul([2],REV_NA2_2x);
+
+REV_NA2_x1= sub(REV_NA2_2x,REV_NA2_ax2);
+
+
+
+REV_NA2 = [];
+
+for(i=rev_NA2_length;i<REV_NA2_x1.length;i++){
+REV_NA2.push(REV_NA2_x1[i]);
+}
+
+/*
+console.log(sub(N1_value,mul(NA2,REV_NA2)));
+*/
+
+}
+
+
+
+
+REV_NA2_x_NA1 = mul_karatsuba(REV_NA2,NA1);
+
+for(i=rev_NA2_length;i<REV_NA2_x_NA1.length;i++){
+RES.push(REV_NA2_x_NA1[i]);
+}
+if(rev_NA2_length>=REV_NA2_x_NA1.length){
+RES=[0];
+}
+
+
+return RES;
+}
+
+
+}
+
+
 
 
 
