@@ -1633,11 +1633,11 @@ console.log(sub(N1_value,mul(NA2,REV_NA2)));
 
 
 
-while(sub(N1_value,mul_karatsuba(NA2,REV_NA2)).length>NA2.length + 1){
+while(sub(N1_value,mul(NA2,REV_NA2)).length>NA2.length + 1){
 
 
-REV_NA2_ax2 = mul_karatsuba(REV_NA2,REV_NA2);
-REV_NA2_ax2 = mul_karatsuba(NA2,REV_NA2_ax2);
+REV_NA2_ax2 = mul(REV_NA2,REV_NA2);
+REV_NA2_ax2 = mul(NA2,REV_NA2_ax2);
 
 var REV_NA2_2x=[];
 for(i=0;i<rev_NA2_length;i++){
@@ -1667,7 +1667,7 @@ console.log(sub(N1_value,mul(NA2,REV_NA2)));
 
 
 
-REV_NA2_x_NA1 = mul_karatsuba(REV_NA2,NA1);
+REV_NA2_x_NA1 = mul(REV_NA2,NA1);
 
 for(i=rev_NA2_length;i<REV_NA2_x_NA1.length;i++){
 RES.push(REV_NA2_x_NA1[i]);
